@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:mobile_car_diagnosis/service/command_response_recognizer.dart';
+import '../service/command_response_recognizer.dart';
 
 class ReceiveDataHandler {
   static final ReceiveDataHandler _instance = ReceiveDataHandler._internal();

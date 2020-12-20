@@ -8,17 +8,32 @@ class ServiceModeThree {
   }
 
   ServiceModeThree._internal();
+  List<String> dtcLetters = ['P', 'C', 'B', 'U'];
 
-  void calculateDtcCodes(List<String> carDecodedResponse) {
-    List<List<String>> dtcData = new List();
-    for (int i = 0; i < carDecodedResponse.length; i += 2) {
-      dtcData.add(carDecodedResponse.sublist(i, i + 2));
+  void calculateDtcCodes(String carDecodedResponse) {
+    List<String> dtcData = new List();
+    for (int i = 0; i < carDecodedResponse.length; i += 4) {
+      dtcData.add(carDecodedResponse.substring(i, i + 4));
     }
 
-    // TODO: calculate short DTC code
+    List<String> dtcDecoded = List();
+    for (String value in dtcData) {
+      int firstByte = _charToByte(value.substring(0, 1));
+      int firstChar = (firstByte & 0xC0) >> 6;
+      int secondChar = (firstByte & 0x30) >> 4;
+
+      String dtcParsed = '';
+      dtcParsed += dtcLetters[firstChar];
+      dtcParsed += secondChar.toString();
+      dtcParsed += value.substring(1, 4);
+
+      dtcDecoded.add(dtcParsed);
+    }
+
+    _prepareAndSendData(dtcDecoded);
   }
 
-  void _prepareDataToSending(List<String> dtcDataCalculated) {
+  void _prepareAndSendData(List<String> dtcDataCalculated) {
     List<DtcCode> dtcCodes = List();
 
     dtcDataCalculated.forEach((element) {
@@ -32,10 +47,11 @@ class ServiceModeThree {
       );
     });
 
-    _sendResponse(dtcCodes);
+    // TODO: send data to service or bloc
   }
 
-  void _sendResponse(List<DtcCode> dtcCodes) {
-    // TODO: send data to service or bloc
+  int _charToByte(String char) {
+    assert(char.length == 1);
+    return (int.parse(char, radix: 16) << 4);
   }
 }
