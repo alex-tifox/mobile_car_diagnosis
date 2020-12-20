@@ -10,6 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:logger/logger.dart';
 import 'package:logger_flutter/logger_flutter.dart';
+import 'package:mobile_car_diagnosis/commands/obd_command.dart';
+import 'package:mobile_car_diagnosis/model/bluetooth_request.dart';
+import 'package:mobile_car_diagnosis/service/bluetooth_connection_service.dart';
+
+import 'commands/command.dart';
 
 void main() => runApp(MyApp());
 
@@ -64,6 +69,8 @@ class _BluetoothAppState extends State<BluetoothApp> {
   bool _connected = false;
   bool _isButtonUnavailable = false;
 
+  BluetoothConnectionService bluetoothConnectionService =
+      BluetoothConnectionService();
   @override
   void initState() {
     super.initState();
@@ -317,85 +324,28 @@ class _BluetoothAppState extends State<BluetoothApp> {
                                     child: FlatButton(
                                       onPressed:
                                           _connected ? resetMessage : null,
-                                      child: Text('Z'),
+                                      child: Text('cfg'),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: FlatButton(
+                                      onPressed: _connected
+                                          ? sendGetAvailablePids
+                                          : null,
+                                      child: Text('pids'),
                                     ),
                                   ),
                                   Expanded(
                                     child: FlatButton(
                                       onPressed:
-                                          _connected ? setNoEchoMessage : null,
-                                      child: Text('E0'),
+                                          _connected ? sendGetSpeed : null,
+                                      child: Text('speed'),
                                     ),
                                   ),
                                   Expanded(
                                     child: FlatButton(
-                                      onPressed: _connected
-                                          ? lineFeedOffMessage
-                                          : null,
-                                      child: Text('L0'),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: FlatButton(
-                                      onPressed:
-                                          _connected ? setTimeoutMessage : null,
-                                      child: Text('TO'),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: FlatButton(
-                                      onPressed: _connected
-                                          ? setProtocol0Message
-                                          : null,
-                                      child: Text('SP0'),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: FlatButton(
-                                      onPressed: _connected
-                                          ? setProtocol3Message
-                                          : null,
-                                      child: Text('SP3'),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: FlatButton(
-                                      onPressed: _connected
-                                          ? setProtocol4Message
-                                          : null,
-                                      child: Text('SP4'),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: FlatButton(
-                                      onPressed: _connected
-                                          ? setProtocol5Message
-                                          : null,
-                                      child: Text('SP5'),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: FlatButton(
-                                      onPressed: _connected
-                                          ? setProtocol6Message
-                                          : null,
-                                      child: Text('SP6'),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: FlatButton(
-                                      onPressed: _connected
-                                          ? sendMessageToBluetooth
-                                          : null,
-                                      child: Text('0100'),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: FlatButton(
-                                      onPressed: _connected
-                                          ? sendMessageToBluetoothTwo
-                                          : null,
-                                      child: Text('0101'),
+                                      onPressed: _connected ? sendGetRpm : null,
+                                      child: Text('rpm'),
                                     ),
                                   ),
                                 ],
@@ -482,7 +432,8 @@ class _BluetoothAppState extends State<BluetoothApp> {
           });
 
           connection.input.listen((Uint8List list) {
-            _logger.d('Response came:');
+            _logger.d('Response:');
+            _logger.d(utf8.decode(list));
             _logger.d(list.map((e) => e.toRadixString(16)).toList());
           }).onDone(() {
             if (isDisconnecting) {
@@ -548,28 +499,6 @@ class _BluetoothAppState extends State<BluetoothApp> {
     }
   }
 
-  // Method to send message,
-  // for turning the Bluetooth device on
-  void _sendOnMessageToBluetooth() async {
-    connection.output.add(utf8.encode("1" + "\r\n"));
-    await connection.output.allSent;
-    show('Device Turned On');
-    setState(() {
-      _deviceState = 1; // device on
-    });
-  }
-
-  // Method to send message,
-  // for turning the Bluetooth device off
-  void _sendOffMessageToBluetooth() async {
-    connection.output.add(utf8.encode("0" + "\r\n"));
-    await connection.output.allSent;
-    show('Device Turned Off');
-    setState(() {
-      _deviceState = -1; // device off
-    });
-  }
-
   // Method to show a Snackbar,
   // taking message as the text
   Future show(
@@ -588,87 +517,37 @@ class _BluetoothAppState extends State<BluetoothApp> {
   }
 
   void resetMessage() async {
-    connection.output.add(utf8.encode('AT Z'));
-    await connection.output.allSent;
-    _logger.d('AZ Z');
-    await Future.delayed(Duration(milliseconds: 200));
+    await _sendElmCommand('AT Z');
+    await _sendElmCommand('AT E0');
+    await _sendElmCommand('AT L0');
+//    await _sendElmCommand('AT AT1');
+    await _sendElmCommand('AT S0');
+    await _sendElmCommand('AT SP 0');
   }
 
-  void lineFeedOffMessage() async {
-    connection.output.add(utf8.encode('AT L0'));
-    await connection.output.allSent;
-    _logger.d('AT L0');
-    await Future.delayed(Duration(milliseconds: 200));
+  void sendGetAvailablePids() async {
+    await _sendMessage('01 00');
   }
 
-  void setProtocol0Message() async {
-    connection.output.add(utf8.encode('AT SP 0'));
-    await connection.output.allSent;
-    _logger.d('AT SP 0');
-    await Future.delayed(Duration(milliseconds: 200));
+  void sendGetSpeed() async {
+    await _sendMessage('03');
   }
 
-  void setProtocol3Message() async {
-    connection.output.add(utf8.encode('AT SP 3'));
-    await connection.output.allSent;
-    _logger.d('AT SP 3');
-    await Future.delayed(Duration(milliseconds: 200));
+  void sendGetRpm() async {
+    await _sendMessage('01 0C');
   }
 
-  void setProtocol4Message() async {
-    connection.output.add(utf8.encode('AT SP 4'));
-    await connection.output.allSent;
-    _logger.d('AT SP 4');
-    await Future.delayed(Duration(milliseconds: 200));
+  Future<void> _sendMessage(String command) async {
+    BluetoothRequest bluetoothRequest =
+        BluetoothRequest(ObdCommand(command: command));
+    connection.output.add(bluetoothRequest.getDataToSend);
+    await Future.delayed(Duration(milliseconds: 600));
   }
 
-  void setProtocol5Message() async {
-    connection.output.add(utf8.encode('AT SP 5'));
-    await connection.output.allSent;
-    _logger.d('AT SP 5');
-    await Future.delayed(Duration(milliseconds: 200));
-  }
-
-  void setProtocol6Message() async {
-    connection.output.add(utf8.encode('AT SP 6'));
-    await connection.output.allSent;
-    _logger.d('AT SP 6');
-    await Future.delayed(Duration(milliseconds: 200));
-  }
-
-  void setTimeoutMessage() async {
-    await Future.delayed(Duration(milliseconds: 200));
-    connection.output
-        .add(utf8.encode('AT ST ${(125 & 0xFF).toRadixString(16)}'));
-    await connection.output.allSent;
-    _logger.d('AT ST 125');
-  }
-
-  void setNoEchoMessage() async {
-    await Future.delayed(Duration(milliseconds: 200));
-    connection.output.add(utf8.encode('AT E0'));
-    await connection.output.allSent;
-    _logger.d('AT E0');
-  }
-
-  void sendMessageToBluetooth() async {
-    await Future.delayed(Duration(milliseconds: 200));
-    List<int> dataToSent = Uint8List.fromList([0x01, 0x00]);
-    connection.output.add(dataToSent);
-    await connection.output.allSent;
-    _logger.d('01 00');
-    _logger
-        .d('Data sent: ${dataToSent.map((e) => e.toRadixString(16)).toList()}');
-    _logger.d('Raw data sent: $dataToSent');
-  }
-
-  void sendMessageToBluetoothTwo() async {
-    await Future.delayed(Duration(milliseconds: 200));
-    List<int> dataToSent = Uint8List.fromList([0x01, 0x01]);
-    connection.output.add(dataToSent);
-    _logger.d('01 01');
-    _logger
-        .d('Data sent: ${dataToSent.map((e) => e.toRadixString(16)).toList()}');
-    _logger.d('Raw data sent: $dataToSent');
+  Future<void> _sendElmCommand(String command) async {
+    connection.output.add(Uint8List.fromList([
+      ...utf8.encode(command + '\r'),
+    ]));
+    await Future.delayed(Duration(milliseconds: 400));
   }
 }

@@ -1,13 +1,12 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:logger/logger.dart';
 
+import '../service/receive_data_handler.dart';
 import '../model/bluetooth_request.dart';
 import '../model/bluetooth_response.dart';
-import '../service/bluetooth_data_helper.dart';
 
 class BluetoothConnectionService {
   static final BluetoothConnectionService _instance =
@@ -61,7 +60,7 @@ class BluetoothConnectionService {
       _connection = connection;
       _device = device;
       // Setting listener of data coming from connection
-      _connection.input.listen(_receiveData);
+      _connection.input.listen(ReceiveDataHandler().handleReceiveData);
     }).catchError((error) {
       _logger.e('Cannot connect!');
       _logger.e(error);
@@ -85,13 +84,6 @@ class BluetoothConnectionService {
   /// device user is connected to
   void sendData(BluetoothRequest command) {
     _connection.output.add(command.getDataToSend);
-  }
-
-  /// Listener function designed to handle data came from [_connection]
-  void _receiveData(Uint8List data) {
-    _connectionToServiceStreamIn.add(
-      BluetoothDataHelper.transformRawDataToResponse(data),
-    );
   }
 
   Future<List<BluetoothDevice>> _getPairedDevices() async {

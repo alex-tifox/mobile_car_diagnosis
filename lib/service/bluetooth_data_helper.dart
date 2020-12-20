@@ -7,8 +7,7 @@ class BluetoothDataHelper {
   static Uint8List transformCommandToSendReadyFormat(String command) {
     command = command.trim();
     Uint8List hexArray = Uint8List.fromList([
-      ...command.split(' ').map((e) => int.parse(e, radix: 16)).toList(),
-      ...utf8.encode('\r'),
+      ...utf8.encode(command + '\r'),
     ]);
 
     return hexArray;

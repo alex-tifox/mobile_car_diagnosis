@@ -1,11 +1,5 @@
-import './obd_command.dart';
+import '../commands/command.dart';
 
-enum ElmCommands {
-  defaultConfiguration,
-  resetConfiguration,
-  setProtocol,
-}
-
-class ElmCommand extends ObdCommand {
-  ElmCommand(String command) : super(command);
+class ElmCommand extends Command {
+  ElmCommand(String command) : super(command: command);
 }
