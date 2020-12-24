@@ -1,13 +1,18 @@
 import '../../model/dtc_code.dart';
+import '../main_service.dart';
 
 class ServiceModeThree {
+  MainService _mainService;
   static final ServiceModeThree _instance = ServiceModeThree._internal();
 
   factory ServiceModeThree() {
     return _instance;
   }
 
-  ServiceModeThree._internal();
+  ServiceModeThree._internal() {
+    _mainService = MainService();
+  }
+
   List<String> dtcLetters = ['P', 'C', 'B', 'U'];
 
   void calculateDtcCodes(String carDecodedResponse) {
@@ -46,8 +51,7 @@ class ServiceModeThree {
         ),
       );
     });
-
-    // TODO: send data to service or bloc
+    _mainService.handleReceivedDtcCodes(dtcCodes);
   }
 
   int _charToByte(String char) {
