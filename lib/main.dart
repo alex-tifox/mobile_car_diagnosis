@@ -520,7 +520,6 @@ class _BluetoothAppState extends State<BluetoothApp> {
     await _sendElmCommand('AT Z');
     await _sendElmCommand('AT E0');
     await _sendElmCommand('AT L0');
-//    await _sendElmCommand('AT AT1');
     await _sendElmCommand('AT S0');
     await _sendElmCommand('AT SP 0');
   }
