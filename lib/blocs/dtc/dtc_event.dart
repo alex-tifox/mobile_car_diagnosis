@@ -6,9 +6,9 @@ abstract class DtcEvent {}
 class RequestDtcEvent extends DtcEvent {}
 
 class ReceivedDtcEvent extends DtcEvent {
-  final DtcReceivedState diagnosticTroubleCodesReceivedState;
+  final List<DtcCode> dtcCodesList;
 
   ReceivedDtcEvent({
-    @required this.diagnosticTroubleCodesReceivedState,
+    @required this.dtcCodesList,
   });
 }
