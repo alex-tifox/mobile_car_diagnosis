@@ -7,16 +7,20 @@ class StartScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Car Diagnosis Mobile',
-          style: Theme.of(context).textTheme.headline6,
         ),
-        backgroundColor: Theme.of(context).colorScheme.primaryVariant,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30),
-            bottomRight: Radius.circular(30),
+            bottomLeft: Radius.circular(25),
+            bottomRight: Radius.circular(25),
           ),
         ),
         elevation: 10.0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.bluetooth),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: Container(
         margin: EdgeInsets.all(20.0),
