@@ -25,7 +25,6 @@ dependencies:
     sdk: flutter
   equatable: ^1.2.5
   flutter_bloc: ^6.1.0
-  flutter_blue: ^0.7.2
 
   flutter_bluetooth_serial: ^0.2.2
   logger_flutter: ^0.7.1
@@ -48,6 +47,19 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/nunito/Nunito-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/nunito/Nunito-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/nunito/Nunito-ExtraBold.ttf
+          weight: 800
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/roboto/Roboto-Regular.ttf
+          weight: 400
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

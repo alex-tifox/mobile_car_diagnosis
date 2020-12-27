@@ -1,6 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:logger/logger.dart';
+
+import '../commands/command.dart';
+import '../service/receive_data_handler.dart';
 
 class BluetoothConnectionService {
   static final BluetoothConnectionService _instance =
@@ -10,26 +15,71 @@ class BluetoothConnectionService {
     return _instance;
   }
 
-  BluetoothConnectionService._internal() {
-    _bluetoothStreamController = StreamController();
+  BluetoothConnectionService._internal();
+
+  /// Represents bluetooth connection to the device
+  BluetoothConnection _connection;
+
+  /// Shows bluetooth state of a physical device (smartphone)
+  BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
+
+  /// Instance of a [FlutterBluetoothSerial] which implements bridge between
+  /// application and native implemented BT workflow
+  FlutterBluetoothSerial _bluetooth = FlutterBluetoothSerial.instance;
+
+  /// Current device you are connected to
+  BluetoothDevice _device;
+
+  /// Getting all paired devices to the phone
+  Future<List<BluetoothDevice>> get pairedDevicesList async =>
+      await _getPairedDevices();
+  Logger _logger = Logger();
+
+  BluetoothDevice get currentDevice => _device;
+
+  void connectToDevice(BluetoothDevice device) async {
+    _enableBluetooth();
+    await BluetoothConnection.toAddress(_device.address)
+        .then((BluetoothConnection connection) {
+      _connection = connection;
+      _device = device;
+      // Setting listener of data coming from connection
+      _connection.input.listen(ReceiveDataHandler().handleReceiveData);
+    }).catchError((error) {
+      _logger.e('Cannot connect!');
+      _logger.e(error);
+    });
   }
 
-  FlutterBlue _flutterBlue = FlutterBlue.instance;
+  void disconnectFromDevice() async {
+    await _connection.close();
+    _device = null;
+  }
 
-  StreamController _bluetoothStreamController;
+  /// Method helps to send data - [Command] via [_connection] to the
+  /// device user is connected to
+  void sendData(Command command) {
+    _enableBluetooth();
+    _connection.output.add(command.dataToSend);
+  }
 
-  void startScanning() {
-    _flutterBlue.startScan(timeout: Duration(seconds: 4));
+  void _enableBluetooth() async {
+    _bluetoothState = await FlutterBluetoothSerial.instance.state;
 
-    var subscription = _flutterBlue.scanResults.listen((results) {
-      // do something with scan results
-      for (ScanResult r in results) {
-        print('${r.device.name} found! rssi: ${r.rssi}');
-      }
-    });
+    if (_bluetoothState == BluetoothState.STATE_OFF) {
+      await FlutterBluetoothSerial.instance.requestEnable();
+    }
+  }
 
-    _flutterBlue.stopScan();
+  Future<List<BluetoothDevice>> _getPairedDevices() async {
+    _enableBluetooth();
+    List<BluetoothDevice> devices = [];
+    try {
+      devices = await _bluetooth.getBondedDevices();
+    } on PlatformException catch (e) {
+      _logger.e("Error while getting paired devices. :" + e.toString());
+    }
 
-    subscription.cancel();
+    return devices;
   }
 }
