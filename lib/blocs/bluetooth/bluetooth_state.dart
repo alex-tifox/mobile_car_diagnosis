@@ -7,16 +7,19 @@ class BluetoothInitial extends BluetoothState {}
 
 class BluetoothPairedDevicesListState extends BluetoothState {
   final List<BluetoothDevice> pairedDevicesList;
-
   BluetoothPairedDevicesListState({
     @required this.pairedDevicesList,
   });
 }
 
-class BluetoothConnectDeviceInProcess extends BluetoothState {
+class BluetoothConnectDeviceInProcessState extends BluetoothState {
   final bool connected;
+  final BluetoothDevice device;
 
-  BluetoothConnectDeviceInProcess({
+  BluetoothConnectDeviceInProcessState({
     this.connected = false,
+    this.device,
   });
 }
+
+class BluetoothDeviceDisconnectedState extends BluetoothState {}

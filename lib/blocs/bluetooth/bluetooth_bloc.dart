@@ -18,6 +18,8 @@ class BluetoothBloc extends Bloc<BluetoothEvent, BluetoothState> {
   StreamSubscription<ResponseStreamFact> _serviceToBlocListener;
   StreamSink<RequestStreamFact> _blocToServiceStreamIn;
 
+  BluetoothDevice _connectedDevice;
+
   BluetoothBloc()
       : _mainService = MainService(),
         super(BluetoothInitial()) {
@@ -32,7 +34,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, BluetoothState> {
   ) async* {
     /// Paired Devices request and response
     if (event is BluetoothRequestPairedDevicesEvent) {
-      _blocToServiceStreamIn.add(BluetoothPairedDevicesRequest());
+      _handleRequestPairedDevice();
     } else if (event is BluetoothReceivedPairedDevicesEvent) {
       yield BluetoothPairedDevicesListState(
         pairedDevicesList: event.pairedDevices,
@@ -42,23 +44,61 @@ class BluetoothBloc extends Bloc<BluetoothEvent, BluetoothState> {
     /// Connect to device request and response
     else if (event is BluetoothConnectToDeviceEvent) {
       _blocToServiceStreamIn.add(
-        BluetoothConnectToDeviceRequest(
+        BluetoothRequest(
+          requestName: BluetoothRequestName.connect_device,
           device: event.device,
         ),
       );
-      yield BluetoothConnectDeviceInProcess();
+      yield BluetoothConnectDeviceInProcessState();
     } else if (event is BluetoothDeviceConnectedEvent) {
-      yield BluetoothConnectDeviceInProcess(connected: true);
+      yield BluetoothConnectDeviceInProcessState(
+        connected: true,
+        device: event.device,
+      );
+    } else if (event is BluetoothDeviceDisconnectEvent) {
+      _blocToServiceStreamIn.add(
+        BluetoothRequest(
+          requestName: BluetoothRequestName.disconnect_device,
+        ),
+      );
+    } else if (event is BluetoothDeviceDisconnectedEvent) {
+      _handleRequestPairedDevice();
+      yield BluetoothDeviceDisconnectedState();
     }
   }
 
   void _serviceToBlocHandler(ResponseStreamFact responseStreamFact) {
-    if (responseStreamFact is BluetoothPairedDevicesResponse) {
-      this.add(responseStreamFact.bluetoothReceivedPairedDevicesEvent);
-    } else if (responseStreamFact is BluetoothDeviceConnectedResponse) {
-      this.add(BluetoothDeviceConnectedEvent());
+    if (responseStreamFact is BluetoothResponse) {
+      switch (responseStreamFact.responseName) {
+        case BluetoothResponseName.paired_devices:
+          this.add(
+            BluetoothReceivedPairedDevicesEvent(
+              pairedDevices: responseStreamFact.pairedDevices,
+            ),
+          );
+
+          break;
+
+        case BluetoothResponseName.device_connected:
+          this.add(
+            BluetoothDeviceConnectedEvent(
+              device: responseStreamFact.device,
+            ),
+          );
+
+          break;
+        case BluetoothResponseName.device_disconnected:
+          this.add(BluetoothDeviceDisconnectedEvent());
+          break;
+      }
     }
   }
+
+  void _handleRequestPairedDevice() => _blocToServiceStreamIn.add(
+        BluetoothRequest(
+          requestName: BluetoothRequestName.paired_devices,
+        ),
+      );
 
   @override
   Future<Function> close() {

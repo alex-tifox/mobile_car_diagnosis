@@ -1,6 +1,25 @@
 import 'package:flutter/material.dart';
 
+import '../connect_device/connect_device_screen.dart';
+
 class StartScreen extends StatelessWidget {
+  static const String route = '/start_screen';
+
+  _navigateToConnectDeviceScreen(BuildContext context) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            ConnectDeviceScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(
+          opacity: animation,
+          child: child,
+        ),
+        transitionDuration: Duration(milliseconds: 200),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +37,7 @@ class StartScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.bluetooth),
-            onPressed: () {},
+            onPressed: () => _navigateToConnectDeviceScreen(context),
           ),
         ],
       ),

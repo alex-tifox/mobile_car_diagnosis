@@ -1,59 +1,86 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import './configuration/app_theme.dart';
-import './screens/start_screen.dart';
+import './blocs/blocs.dart';
+import './screens/connect_device/connect_device_screen.dart';
+import './screens/start_screen/start_screen.dart';
+import './service/main_service.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primaryTextTheme: TextTheme(
-          headline6: TextStyle(
-            color: Color(0xFFF9F9F9),
-            fontFamily: 'Nunito',
-            fontSize: 20.0,
-            fontWeight: FontWeight.w800,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<BluetoothBloc>(
+          create: (context) => BluetoothBloc(),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primaryTextTheme: TextTheme(
+            headline6: TextStyle(
+              color: Color(0xFFF9F9F9),
+              fontFamily: 'Nunito',
+              fontSize: 20.0,
+              fontWeight: FontWeight.w800,
+            ),
+            subtitle1: TextStyle(
+              fontFamily: 'Nunito',
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            button: TextStyle(
+              fontFamily: 'Nunito',
+              fontSize: 16.0,
+              fontWeight: FontWeight.normal,
+            ),
+            bodyText2: TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 16.0,
+              fontWeight: FontWeight.normal,
+            ),
           ),
-          subtitle1: TextStyle(
-            fontFamily: 'Nunito',
-            fontSize: 16.0,
-            fontWeight: FontWeight.bold,
-          ),
-          button: TextStyle(
-            fontFamily: 'Nunito',
-            fontSize: 16.0,
-            fontWeight: FontWeight.normal,
-          ),
-          bodyText2: TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 16.0,
-            fontWeight: FontWeight.normal,
+          colorScheme: ColorScheme(
+              primary: Color(0xFF807CB0),
+              primaryVariant: Color(0xFF4C3C8A),
+              secondary: Color(0xFFACB07C),
+              secondaryVariant: Color(0xFF6B7535),
+              surface: Color(0xFFC7C5DE),
+              background: Color(0xFFE8E8F1),
+              error: Color(0xFF9E220C),
+              onPrimary: Color(0xFF191919),
+              onSecondary: Color(0xFFB0CA87),
+              onSurface: Color(0xFF191919),
+              onBackground: Color(0xFF191919),
+              onError: Color(0xFFF9F9F9),
+              brightness: Brightness.light),
+          appBarTheme: AppBarTheme(
+            color: Color(0xFF4C3C8A),
           ),
         ),
-        colorScheme: ColorScheme(
-            primary: Color(0xFF807CB0),
-            primaryVariant: Color(0xFF4C3C8A),
-            secondary: Color(0xFFACB07C),
-            secondaryVariant: Color(0xFF6B7535),
-            surface: Color(0xFFC7C5DE),
-            background: Color(0xFFE8E8F1),
-            error: Color(0xFF9E220C),
-            onPrimary: Color(0xFF191919),
-            onSecondary: Color(0xFF191919),
-            onSurface: Color(0xFF191919),
-            onBackground: Color(0xFF191919),
-            onError: Color(0xFFF9F9F9),
-            brightness: Brightness.light),
-        appBarTheme: AppBarTheme(
-          color: Color(0xFF4C3C8A),
-        ),
+        routes: {
+          ConnectDeviceScreen.route: (context) => ConnectDeviceScreen(),
+          StartScreen.route: (context) => StartScreen(),
+        },
+        home: StartScreen(),
       ),
-      home: StartScreen(),
     );
+  }
+
+  @override
+  void dispose() {
+    MainService().dispose();
+    super.dispose();
   }
 }
 

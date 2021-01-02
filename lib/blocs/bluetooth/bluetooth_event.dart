@@ -7,7 +7,6 @@ class BluetoothRequestPairedDevicesEvent extends BluetoothEvent {}
 
 class BluetoothReceivedPairedDevicesEvent extends BluetoothEvent {
   final List<BluetoothDevice> pairedDevices;
-
   BluetoothReceivedPairedDevicesEvent({
     @required this.pairedDevices,
   });
@@ -21,4 +20,14 @@ class BluetoothConnectToDeviceEvent extends BluetoothEvent {
   });
 }
 
-class BluetoothDeviceConnectedEvent extends BluetoothEvent {}
+class BluetoothDeviceConnectedEvent extends BluetoothEvent {
+  final BluetoothDevice device;
+
+  BluetoothDeviceConnectedEvent({
+    @required this.device,
+  });
+}
+
+class BluetoothDeviceDisconnectEvent extends BluetoothEvent {}
+
+class BluetoothDeviceDisconnectedEvent extends BluetoothEvent {}

@@ -1,5 +1,5 @@
 class DuplexStreamFact {}
 
-class RequestStreamFact extends DuplexStreamFact {}
+abstract class RequestStreamFact extends DuplexStreamFact {}
 
-class ResponseStreamFact extends DuplexStreamFact {}
+abstract class ResponseStreamFact extends DuplexStreamFact {}
