@@ -5,6 +5,7 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:logger/logger.dart';
 
 import '../commands/command.dart';
+import '../service/main_service.dart';
 import '../service/receive_data_handler.dart';
 
 class BluetoothConnectionService {
@@ -36,34 +37,43 @@ class BluetoothConnectionService {
   Logger _logger = Logger();
 
   BluetoothDevice get currentDevice => _device;
+  bool get isDisconnected => _connection == null ? true : false;
 
-  void connectToDevice(BluetoothDevice device) async {
-    _enableBluetooth();
-    await BluetoothConnection.toAddress(_device.address)
-        .then((BluetoothConnection connection) {
-      _connection = connection;
-      _device = device;
-      // Setting listener of data coming from connection
-      _connection.input.listen(ReceiveDataHandler().handleReceiveData);
-    }).catchError((error) {
-      _logger.e('Cannot connect!');
-      _logger.e(error);
-    });
+  void dispose() {
+    _connection.dispose();
+    _connection.close();
+    _logger.d('BluetoothConnectionService disposed');
   }
 
-  void disconnectFromDevice() async {
+  Future<void> connectToDevice(BluetoothDevice device) async {
+    await _enableBluetooth();
+
+    BluetoothConnection connection =
+        await BluetoothConnection.toAddress(device.address);
+
+    _connection = connection;
+    _device = device;
+    // Setting listener of data coming from connection
+    _connection.input.listen(ReceiveDataHandler().handleReceiveData).onDone(() {
+      MainService().handleDeviceDisconnected();
+    });
+    MainService().handleDeviceConnected(_device);
+  }
+
+  Future<void> disconnectFromDevice() async {
     await _connection.close();
     _device = null;
   }
 
   /// Method helps to send data - [Command] via [_connection] to the
   /// device user is connected to
-  void sendData(Command command) {
-    _enableBluetooth();
+  Future<void> sendData(Command command) async {
+    await _enableBluetooth();
     _connection.output.add(command.dataToSend);
+    await _connection.output.allSent;
   }
 
-  void _enableBluetooth() async {
+  Future<void> _enableBluetooth() async {
     _bluetoothState = await FlutterBluetoothSerial.instance.state;
 
     if (_bluetoothState == BluetoothState.STATE_OFF) {
@@ -72,7 +82,7 @@ class BluetoothConnectionService {
   }
 
   Future<List<BluetoothDevice>> _getPairedDevices() async {
-    _enableBluetooth();
+    await _enableBluetooth();
     List<BluetoothDevice> devices = [];
     try {
       devices = await _bluetooth.getBondedDevices();

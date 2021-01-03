@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:logger/logger.dart';
 
 import '../commands/obd_command.dart';
 import '../blocs/blocs.dart';
@@ -31,7 +32,8 @@ class MainService {
   StreamSubscription<RequestStreamFact> _blocToServiceStreamListener;
 
   DiagnosisDataRepository _dataRepository;
-
+  BluetoothConnectionService _bluetoothConnectionService;
+  Logger _logger = Logger();
   static final MainService _instance = MainService._internal();
 
   factory MainService() {
@@ -49,6 +51,7 @@ class MainService {
     _blocToServiceStreamListener = _blocToServiceStreamController.stream
         .listen(_fromBlocToServiceListener);
     _dataRepository = DiagnosisDataRepository();
+    _bluetoothConnectionService = BluetoothConnectionService();
   }
 
   /// Stream used for listening for sent data from service in every Bloc.
@@ -63,25 +66,38 @@ class MainService {
 
   void _fromBlocToServiceListener(RequestStreamFact requestStreamFact) async {
     /// Paired devices request and response
-    if (requestStreamFact is BluetoothPairedDevicesRequest) {
-      List<BluetoothDevice> pairedDevices =
-          await BluetoothConnectionService().pairedDevicesList;
+    if (requestStreamFact is BluetoothRequest) {
+      switch (requestStreamFact.requestName) {
+        case BluetoothRequestName.paired_devices:
+          {
+            List<BluetoothDevice> pairedDevices =
+                await _bluetoothConnectionService.pairedDevicesList;
 
-      _serviceToBlocStreamIn.add(
-        BluetoothPairedDevicesResponse(
-          bluetoothReceivedPairedDevicesEvent:
-              BluetoothReceivedPairedDevicesEvent(
-            pairedDevices: pairedDevices,
-          ),
-        ),
-      );
-    } else if (requestStreamFact is BluetoothConnectToDeviceRequest) {
-      BluetoothConnectionService().connectToDevice(requestStreamFact.device);
+            _serviceToBlocStreamIn.add(
+              BluetoothResponse(
+                responseName: BluetoothResponseName.paired_devices,
+                pairedDevices: pairedDevices,
+              ),
+            );
+          }
+          break;
+        case BluetoothRequestName.connect_device:
+          {
+            await _bluetoothConnectionService
+                .connectToDevice(requestStreamFact.device);
+          }
+          break;
+        case BluetoothRequestName.disconnect_device:
+          {
+            await _bluetoothConnectionService.disconnectFromDevice();
+          }
+          break;
+      }
     }
 
     /// Send request about DTCs
     else if (requestStreamFact is DtcRequestStreamFact) {
-      _sendCommand(ObdCommand.getAllDtcs);
+      await _sendCommand(ObdCommand.getAllDtcs);
     }
   }
 
@@ -109,7 +125,29 @@ class MainService {
     );
   }
 
-  void _sendCommand(String command) {
-    BluetoothConnectionService().sendData(ObdCommand(command: command));
+  void handleDeviceConnected(BluetoothDevice device) {
+    _serviceToBlocStreamIn.add(
+      BluetoothResponse(
+        responseName: BluetoothResponseName.device_connected,
+        device: device,
+      ),
+    );
+  }
+
+  void handleDeviceDisconnected() {
+    _serviceToBlocStreamIn.add(
+      BluetoothResponse(
+        responseName: BluetoothResponseName.device_disconnected,
+      ),
+    );
+  }
+
+  Future<void> _sendCommand(String command) async {
+    await _bluetoothConnectionService.sendData(ObdCommand(command: command));
+  }
+
+  void dispose() {
+    _bluetoothConnectionService.dispose();
+    _logger.d('MainService disposed');
   }
 }
