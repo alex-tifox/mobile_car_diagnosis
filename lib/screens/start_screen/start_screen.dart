@@ -1,24 +1,38 @@
 import 'package:flutter/material.dart';
 
+import '../diagnosis/diagnosis_screen.dart';
 import '../connect_device/connect_device_screen.dart';
 
 class StartScreen extends StatelessWidget {
   static const String route = '/start_screen';
 
-  _navigateToConnectDeviceScreen(BuildContext context) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            ConnectDeviceScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-            FadeTransition(
-          opacity: animation,
-          child: child,
+  _navigateToConnectDeviceScreen(BuildContext context) =>
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              ConnectDeviceScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+              FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+          transitionDuration: Duration(milliseconds: 200),
         ),
-        transitionDuration: Duration(milliseconds: 200),
-      ),
-    );
-  }
+      );
+
+  _navigateToDiagnosisScreen(BuildContext context) =>
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              DiagnosisScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+              FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+          transitionDuration: Duration(milliseconds: 200),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -63,13 +77,16 @@ class StartScreen extends StatelessWidget {
             ),
             Expanded(
               child: InkWell(
-                onTap: () {},
+                onTap: () => _navigateToDiagnosisScreen(context),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.all(
                       Radius.circular(20.0),
                     ),
+                  ),
+                  child: Center(
+                    child: Text('Diagnose'),
                   ),
                 ),
               ),
