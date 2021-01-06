@@ -28,6 +28,8 @@ class BluetoothBloc extends Bloc<BluetoothEvent, BluetoothState> {
     _blocToServiceStreamIn = _mainService.blocToServiceStreamIn;
   }
 
+  bool get isConnected => _connectedDevice == null ? false : true;
+
   @override
   Stream<BluetoothState> mapEventToState(
     BluetoothEvent event,
@@ -51,6 +53,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, BluetoothState> {
       );
       yield BluetoothConnectDeviceInProcessState();
     } else if (event is BluetoothDeviceConnectedEvent) {
+      _connectedDevice = event.device;
       yield BluetoothConnectDeviceInProcessState(
         connected: true,
         device: event.device,
@@ -62,6 +65,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, BluetoothState> {
         ),
       );
     } else if (event is BluetoothDeviceDisconnectedEvent) {
+      _connectedDevice = null;
       _handleRequestPairedDevice();
       yield BluetoothDeviceDisconnectedState();
     }

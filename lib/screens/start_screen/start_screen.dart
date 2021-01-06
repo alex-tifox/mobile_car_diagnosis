@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../configuration/custom_icons_icons.dart';
 import '../diagnosis/diagnosis_screen.dart';
+import '../../blocs/bluetooth/bluetooth_bloc.dart';
+import '../../widgets/custom_elevated_button.dart';
+import '../../configuration/custom_icons_icons.dart';
 import '../connect_device/connect_device_screen.dart';
 
 class StartScreen extends StatelessWidget {
@@ -21,7 +24,34 @@ class StartScreen extends StatelessWidget {
         ),
       );
 
-  _navigateToDiagnosisScreen(BuildContext context) =>
+  void _showDeviceDisconnectedDialog(BuildContext context) {
+    final Widget connectDeviceAlertDialog = AlertDialog(
+      title: Text(
+        'Currently device is disconnected',
+      ),
+      content: Text(
+        'To start scanning for issues you need firstly connect to correct device',
+      ),
+      actions: [
+        CustomElevatedButton(
+          onPressed: (context) {
+            Navigator.of(context).pop();
+            _navigateToConnectDeviceScreen(context);
+          },
+          buttonText: 'Connect',
+        ),
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (context) => connectDeviceAlertDialog,
+    );
+  }
+
+  _navigateToDiagnosisScreen(BuildContext context) {
+    if (!BlocProvider.of<BluetoothBloc>(context).isConnected) {
+      _showDeviceDisconnectedDialog(context);
+    } else {
       Navigator.of(context).push(
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
@@ -34,6 +64,8 @@ class StartScreen extends StatelessWidget {
           transitionDuration: Duration(milliseconds: 200),
         ),
       );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
