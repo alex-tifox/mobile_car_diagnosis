@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../configuration/custom_icons_icons.dart';
 import '../diagnosis/diagnosis_screen.dart';
 import '../connect_device/connect_device_screen.dart';
 
@@ -86,7 +87,27 @@ class StartScreen extends StatelessWidget {
                     ),
                   ),
                   child: Center(
-                    child: Text('Diagnose'),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Icon(
+                          CustomIcons.car_repair,
+                          size: 120,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          'DIAGNOSTIC',
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .bodyText2
+                              .copyWith(
+                                color: Colors.white,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
