@@ -31,8 +31,9 @@ class ServiceModeThree {
       dtcParsed += dtcLetters[firstChar];
       dtcParsed += secondChar.toString();
       dtcParsed += value.substring(1, 4);
-
-      dtcDecoded.add(dtcParsed);
+      if (dtcParsed != 'P0000') {
+        dtcDecoded.add(dtcParsed);
+      }
     }
 
     _prepareAndSendData(dtcDecoded);

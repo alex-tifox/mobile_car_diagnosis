@@ -21,6 +21,9 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<BluetoothBloc>(
           create: (context) => BluetoothBloc(),
         ),
+        BlocProvider<DtcBloc>(
+          create: (context) => DtcBloc(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

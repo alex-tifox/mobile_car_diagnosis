@@ -158,8 +158,10 @@ class _ConnectDeviceScreenState extends State<ConnectDeviceScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<BluetoothBloc>(context)
-        .add(BluetoothRequestPairedDevicesEvent());
+    if (!BlocProvider.of<BluetoothBloc>(context).isConnected) {
+      BlocProvider.of<BluetoothBloc>(context)
+          .add(BluetoothRequestPairedDevicesEvent());
+    }
 
     super.initState();
   }

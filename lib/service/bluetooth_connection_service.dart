@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:logger/logger.dart';
 
+import '../commands/elm_command.dart';
+
 import '../commands/command.dart';
 import '../service/main_service.dart';
 import '../service/receive_data_handler.dart';
@@ -54,9 +56,12 @@ class BluetoothConnectionService {
     _connection = connection;
     _device = device;
     // Setting listener of data coming from connection
-    _connection.input.listen(ReceiveDataHandler().handleReceiveData).onDone(() {
+    _connection.input
+        .listen(ReceiveDataHandler.instance.handleReceiveData)
+        .onDone(() {
       MainService().handleDeviceDisconnected();
     });
+    await _initialDeviceConfiguration();
     MainService().handleDeviceConnected(_device);
   }
 
@@ -91,5 +96,18 @@ class BluetoothConnectionService {
     }
 
     return devices;
+  }
+
+  Future<void> _initialDeviceConfiguration() async {
+    await sendData(ElmCommand('AT Z'));
+    await Future.delayed(Duration(milliseconds: 600));
+    await sendData(ElmCommand('AT E0'));
+    await Future.delayed(Duration(milliseconds: 600));
+    await sendData(ElmCommand('AT L0'));
+    await Future.delayed(Duration(milliseconds: 600));
+    await sendData(ElmCommand('AT S0'));
+    await Future.delayed(Duration(milliseconds: 600));
+    await sendData(ElmCommand('AT SP 0'));
+    await Future.delayed(Duration(milliseconds: 600));
   }
 }
