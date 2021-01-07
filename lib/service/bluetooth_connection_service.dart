@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -72,9 +73,12 @@ class BluetoothConnectionService {
 
   /// Method helps to send data - [Command] via [_connection] to the
   /// device user is connected to
-  Future<void> sendData(Command command) async {
+  Future<void> sendData(Command command) async =>
+      _sendRawData(command.getDataToSend());
+
+  Future<void> _sendRawData(Uint8List rawData) async {
     await _enableBluetooth();
-    _connection.output.add(command.dataToSend);
+    _connection.output.add(rawData);
     await _connection.output.allSent;
   }
 
@@ -99,15 +103,9 @@ class BluetoothConnectionService {
   }
 
   Future<void> _initialDeviceConfiguration() async {
-    await sendData(ElmCommand('AT Z'));
-    await Future.delayed(Duration(milliseconds: 600));
-    await sendData(ElmCommand('AT E0'));
-    await Future.delayed(Duration(milliseconds: 600));
-    await sendData(ElmCommand('AT L0'));
-    await Future.delayed(Duration(milliseconds: 600));
-    await sendData(ElmCommand('AT S0'));
-    await Future.delayed(Duration(milliseconds: 600));
-    await sendData(ElmCommand('AT SP 0'));
-    await Future.delayed(Duration(milliseconds: 600));
+    for (Uint8List data in ElmCommand.getInitialConfigurationCommands()) {
+      await _sendRawData(data);
+      await Future.delayed(Duration(milliseconds: 400));
+    }
   }
 }
