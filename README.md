@@ -5,7 +5,7 @@ Mobile Car Diagnosis
 ## Description
 This project is the implementation of idea for diploma project for Bachelor
 of Science at West Pomeranian Technology University with 'Using Flutter framework to
-build mobile application for simple car diagnosis based on OBD2 interface'.
+build mobile application for simple car diagnosis based on OBD2 interface' title
 
 It allows providing simple car diagnostic with finding and displaying DTC (Diagnostic Trouble Codes)
 found in a car's ECU memory
