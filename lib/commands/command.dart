@@ -7,6 +7,4 @@ abstract class Command {
   /// This getter is responsible for data which is stored in Uint8List format
   /// which is required by [BluetoothConnection]
   Uint8List getDataToSend();
-
-  Uint8List _constructDataToSend();
 }

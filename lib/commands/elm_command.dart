@@ -7,7 +7,7 @@ enum ElmCommands { reset, echo, spaces, protocol, lines }
 
 enum ElmOptionState { ON, OFF, AUTO }
 
-class ElmCommand extends Command {
+class ElmCommand implements Command {
   static const String _atCommand = 'AT';
   final ElmCommands elmCommand;
   final ElmOptionState optionState;
@@ -25,6 +25,35 @@ class ElmCommand extends Command {
             'If you want to make initial configuration using one command - '
             'provide only required isInitialConfiguration, otherwise '
             'provide both command and option state');
+
+  ElmCommand._reset(ElmOptionState state)
+      : this(elmCommand: ElmCommands.reset, optionState: state);
+
+  ElmCommand._echo(ElmOptionState state)
+      : this(elmCommand: ElmCommands.reset, optionState: state);
+
+  ElmCommand._spaces(ElmOptionState state)
+      : this(elmCommand: ElmCommands.reset, optionState: state);
+
+  ElmCommand._protocol(ElmOptionState state)
+      : this(elmCommand: ElmCommands.reset, optionState: state);
+
+  ElmCommand._lines(ElmOptionState state)
+      : this(elmCommand: ElmCommands.reset, optionState: state);
+
+  Uint8List _constructDataToSend() => utf8.encode(_atCommand +
+      ElmCommand._availableElmCommands[this.elmCommand][this.optionState]);
+
+  @override
+  Uint8List getDataToSend() => _constructDataToSend();
+
+  static List<Uint8List> getInitialConfigurationCommands() => [
+        ElmCommand._reset(ElmOptionState.AUTO).getDataToSend(),
+        ElmCommand._echo(ElmOptionState.AUTO).getDataToSend(),
+        ElmCommand._lines(ElmOptionState.AUTO).getDataToSend(),
+        ElmCommand._spaces(ElmOptionState.AUTO).getDataToSend(),
+        ElmCommand._protocol(ElmOptionState.AUTO).getDataToSend(),
+      ];
 
   static const Map<ElmCommands, Map<ElmOptionState, String>>
       _availableElmCommands = {
@@ -50,14 +79,4 @@ class ElmCommand extends Command {
       ElmOptionState.AUTO: 'L0',
     },
   };
-
-  @override
-  Uint8List _constructDataToSend() => utf8.encode(_atCommand +
-      ElmCommand._availableElmCommands[this.elmCommand][this.optionState]);
-
-  @override
-  Uint8List getDataToSend() {
-    // TODO: implement getDataToSend
-    throw UnimplementedError();
-  }
 }
