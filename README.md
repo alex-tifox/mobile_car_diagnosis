@@ -1,16 +1,34 @@
-# mobile_car_diagnosis
+# Mobile Simple Car Diagnosis Application
 
 Mobile Car Diagnosis
 
-## Getting Started
+## Description
+This project is the implementation of idea for diploma project for Bachelor
+of Science at West Pomeranian Technology University with 'Using Flutter framework to
+build mobile application for simple car diagnosis based on OBD2 interface'.
 
-This project is a starting point for a Flutter application.
+It allows providing simple car diagnostic with finding and displaying DTC (Diagnostic Trouble Codes)
+found in a car's ECU memory
 
-A few resources to get you started if this is your first Flutter project:
+#### User Flow
+Application user flow is:
+- Enable Bluetooth
+- Connect to ELM327 device
+- Scan for issues
+- Look at found errors
+- Repair a car :)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Technologies
+- **Flutter & Dart** with partial null-safety
+- Attempt for writing **clean and maintainable code** with encapsulation (getters\setters), polymorphism (extending and 
+implementing parent classes), using all best practices for Dart code
+- Reactive approach with **BLoC pattern**
+- Own custom services using streams and asynchronously mechanics - **Streams, Future, async/await**
+- Used **design patterns** - Repository, Singleton
+- **Declarative approach** at creating own custom widgets
+- flutter_bluetooth_serial library for **handling Bluetooth** connection
+- **obdsimulator and ELM327** as diagnostic hardware device for OBD-II interface
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Developer
+
+Oleksandr Tilnyi
