@@ -44,7 +44,7 @@ class DtcBloc extends Bloc<DtcEvent, DtcState> {
 
   void _serviceToBlocHandler(ResponseStreamFact responseStreamFact) {
     if (responseStreamFact is DtcResponseStreamFact) {
-      this.add(responseStreamFact.receivedDtcEvent);
+      add(responseStreamFact.receivedDtcEvent);
     }
   }
 

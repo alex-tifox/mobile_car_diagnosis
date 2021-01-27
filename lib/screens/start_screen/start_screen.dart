@@ -10,7 +10,7 @@ import '../connect_device/connect_device_screen.dart';
 class StartScreen extends StatelessWidget {
   static const String route = '/start_screen';
 
-  _navigateToConnectDeviceScreen(BuildContext context) =>
+  void _navigateToConnectDeviceScreen(BuildContext context) =>
       Navigator.of(context).push(
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
@@ -48,7 +48,7 @@ class StartScreen extends StatelessWidget {
     );
   }
 
-  _navigateToDiagnosisScreen(BuildContext context) {
+  void _navigateToDiagnosisScreen(BuildContext context) {
     if (!BlocProvider.of<BluetoothBloc>(context).isConnected) {
       _showDeviceDisconnectedDialog(context);
     } else {

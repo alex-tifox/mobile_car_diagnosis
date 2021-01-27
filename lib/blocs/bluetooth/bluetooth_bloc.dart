@@ -75,7 +75,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, BluetoothState> {
     if (responseStreamFact is BluetoothResponse) {
       switch (responseStreamFact.responseName) {
         case BluetoothResponseName.paired_devices:
-          this.add(
+          add(
             BluetoothReceivedPairedDevicesEvent(
               pairedDevices: responseStreamFact.pairedDevices,
             ),
@@ -84,7 +84,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, BluetoothState> {
           break;
 
         case BluetoothResponseName.device_connected:
-          this.add(
+          add(
             BluetoothDeviceConnectedEvent(
               device: responseStreamFact.device,
             ),
@@ -92,7 +92,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, BluetoothState> {
 
           break;
         case BluetoothResponseName.device_disconnected:
-          this.add(BluetoothDeviceDisconnectedEvent());
+          add(BluetoothDeviceDisconnectedEvent());
           break;
       }
     }

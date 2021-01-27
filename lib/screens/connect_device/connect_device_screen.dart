@@ -49,7 +49,8 @@ class _ConnectDeviceScreenState extends State<ConnectDeviceScreen> {
           child: BlocConsumer<BluetoothBloc, BluetoothState>(
             listener: (context, bluetoothState) {
               if (bluetoothState is BluetoothDeviceDisconnectedState) {
-                Scaffold.of(context).showSnackBar(_disconnectedSnackBar);
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(_disconnectedSnackBar);
               }
             },
             builder: (context, bluetoothState) {

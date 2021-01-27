@@ -5,11 +5,11 @@ import 'package:logger/logger.dart';
 import './service_modes/service_mode_three.dart';
 
 class CommandResponseRecognizer {
-  Logger _logger = Logger();
+  final Logger _logger = Logger();
 
   void recognizeCommandResponse(List<int> response) {
     if (response.isNotEmpty) {
-      String decodedResponse = utf8.decode(response);
+      var decodedResponse = utf8.decode(response);
       if (decodedResponse.substring(0, 2) == '43') {
         _logger.d('Decoded response is $decodedResponse');
         ServiceModeThree().calculateDtcCodes(decodedResponse.substring(2));
