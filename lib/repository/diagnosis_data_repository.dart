@@ -1,5 +1,4 @@
-import 'package:mobile_car_diagnosis/model/diagnosis_data_model.dart';
-import 'package:mobile_car_diagnosis/model/dtc_code.dart';
+import '../model/dtc_code.dart';
 
 class DiagnosisDataRepository {
   static final DiagnosisDataRepository _instance =
@@ -11,7 +10,7 @@ class DiagnosisDataRepository {
 
   DiagnosisDataRepository._internal();
 
-  final List<DtcCode> _dtcCodes = List();
+  final List<DtcCode> _dtcCodes = [];
 
   void addDtcCode(DtcCode dtcCode) {
     _dtcCodes.add(dtcCode);

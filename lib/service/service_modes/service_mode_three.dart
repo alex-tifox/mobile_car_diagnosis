@@ -16,18 +16,18 @@ class ServiceModeThree {
   List<String> dtcLetters = ['P', 'C', 'B', 'U'];
 
   void calculateDtcCodes(String carDecodedResponse) {
-    List<String> dtcData = new List();
-    for (int i = 0; i < carDecodedResponse.length; i += 4) {
+    var dtcData = <String>[];
+    for (var i = 0; i < carDecodedResponse.length; i += 4) {
       dtcData.add(carDecodedResponse.substring(i, i + 4));
     }
 
-    List<String> dtcDecoded = List();
-    for (String value in dtcData) {
-      int firstByte = _charToByte(value.substring(0, 1));
-      int firstChar = (firstByte & 0xC0) >> 6;
-      int secondChar = (firstByte & 0x30) >> 4;
+    var dtcDecoded = <String>[];
+    for (var value in dtcData) {
+      var firstByte = _charToByte(value.substring(0, 1));
+      var firstChar = (firstByte & 0xC0) >> 6;
+      var secondChar = (firstByte & 0x30) >> 4;
 
-      String dtcParsed = '';
+      var dtcParsed = '';
       dtcParsed += dtcLetters[firstChar];
       dtcParsed += secondChar.toString();
       dtcParsed += value.substring(1, 4);
@@ -40,7 +40,7 @@ class ServiceModeThree {
   }
 
   void _prepareAndSendData(List<String> dtcDataCalculated) {
-    List<DtcCode> dtcCodes = List();
+    var dtcCodes = <DtcCode>[];
 
     dtcDataCalculated.forEach((element) {
       dtcCodes.add(

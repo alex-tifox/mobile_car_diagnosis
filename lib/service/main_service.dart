@@ -33,7 +33,7 @@ class MainService {
 
   DiagnosisDataRepository _dataRepository;
   BluetoothConnectionService _bluetoothConnectionService;
-  Logger _logger = Logger();
+  final Logger _logger = Logger();
   static final MainService _instance = MainService._internal();
 
   factory MainService() {
@@ -70,7 +70,7 @@ class MainService {
       switch (requestStreamFact.requestName) {
         case BluetoothRequestName.paired_devices:
           {
-            List<BluetoothDevice> pairedDevices =
+            var pairedDevices =
                 await _bluetoothConnectionService.pairedDevicesList;
 
             _serviceToBlocStreamIn.add(
@@ -148,6 +148,7 @@ class MainService {
 
   void dispose() {
     _bluetoothConnectionService.dispose();
+    _blocToServiceStreamListener.cancel();
     _logger.d('MainService disposed');
   }
 }

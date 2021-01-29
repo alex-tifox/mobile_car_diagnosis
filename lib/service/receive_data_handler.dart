@@ -11,7 +11,7 @@ class ReceiveDataHandler {
   static ReceiveDataHandler get instance => _instance;
 
   ReceiveDataHandler._internal() {
-    _receivedData = List();
+    _receivedData = [];
   }
 
   final Logger _logger = Logger();
@@ -21,12 +21,12 @@ class ReceiveDataHandler {
   void handleReceiveData(Uint8List data) {
     _logger.d(data);
     _logger.d(utf8.decode(data));
-    List<int> pureData =
+    var pureData =
         data.where((element) => element != 0x0D && element != 0x3E).toList();
 
     if (pureData.isEmpty) {
       CommandResponseRecognizer().recognizeCommandResponse(_receivedData);
-      _receivedData = List();
+      _receivedData = [];
     } else {
       _receivedData.addAll(pureData);
     }

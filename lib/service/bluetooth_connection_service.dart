@@ -29,7 +29,7 @@ class BluetoothConnectionService {
 
   /// Instance of a [FlutterBluetoothSerial] which implements bridge between
   /// application and native implemented BT workflow
-  FlutterBluetoothSerial _bluetooth = FlutterBluetoothSerial.instance;
+  final FlutterBluetoothSerial _bluetooth = FlutterBluetoothSerial.instance;
 
   /// Current device you are connected to
   BluetoothDevice _device;
@@ -37,7 +37,7 @@ class BluetoothConnectionService {
   /// Getting all paired devices to the phone
   Future<List<BluetoothDevice>> get pairedDevicesList async =>
       await _getPairedDevices();
-  Logger _logger = Logger();
+  final Logger _logger = Logger();
 
   BluetoothDevice get currentDevice => _device;
   bool get isDisconnected => _connection == null ? true : false;
@@ -51,8 +51,7 @@ class BluetoothConnectionService {
   Future<void> connectToDevice(BluetoothDevice device) async {
     await _enableBluetooth();
 
-    BluetoothConnection connection =
-        await BluetoothConnection.toAddress(device.address);
+    var connection = await BluetoothConnection.toAddress(device.address);
 
     _connection = connection;
     _device = device;
@@ -92,11 +91,11 @@ class BluetoothConnectionService {
 
   Future<List<BluetoothDevice>> _getPairedDevices() async {
     await _enableBluetooth();
-    List<BluetoothDevice> devices = [];
+    var devices = <BluetoothDevice>[];
     try {
       devices = await _bluetooth.getBondedDevices();
     } on PlatformException catch (e) {
-      _logger.e("Error while getting paired devices. :" + e.toString());
+      _logger.e('Error while getting paired devices. :' + e.toString());
     }
 
     return devices;
