@@ -3,13 +3,14 @@ import 'dart:async';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:logger/logger.dart';
 
-import '../commands/obd_command.dart';
 import '../blocs/blocs.dart';
 import '../blocs/stream_facts.dart';
+import '../commands/obd_command.dart';
 import '../model/dtc_code.dart';
 import '../repository/diagnosis_data_repository.dart';
-import '../service/command_response_recognizer.dart';
 import '../service/bluetooth_connection_service.dart';
+import '../service/command_response_recognizer.dart';
+import '../service/locator.dart';
 import '../service/stream_facts/duplex_stream_fact.dart';
 
 class MainService {
@@ -51,7 +52,7 @@ class MainService {
     _blocToServiceStreamListener = _blocToServiceStreamController.stream
         .listen(_fromBlocToServiceListener);
     _dataRepository = DiagnosisDataRepository();
-    _bluetoothConnectionService = BluetoothConnectionService();
+    _bluetoothConnectionService = locator.get<BluetoothConnectionService>();
   }
 
   /// Stream used for listening for sent data from service in every Bloc.
