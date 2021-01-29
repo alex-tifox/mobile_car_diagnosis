@@ -41,8 +41,8 @@ class ElmCommand implements Command {
   ElmCommand._lines(ElmOptionState state)
       : this(elmCommand: ElmCommands.reset, optionState: state);
 
-  Uint8List _constructDataToSend() => utf8.encode(_atCommand +
-      ElmCommand._availableElmCommands[this.elmCommand][this.optionState]);
+  Uint8List _constructDataToSend() => utf8.encode(
+      _atCommand + ElmCommand._availableElmCommands[elmCommand][optionState]);
 
   @override
   Uint8List getDataToSend() => _constructDataToSend();

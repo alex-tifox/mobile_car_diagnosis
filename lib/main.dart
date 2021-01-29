@@ -4,9 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import './blocs/blocs.dart';
 import './screens/connect_device/connect_device_screen.dart';
 import './screens/start_screen/start_screen.dart';
+import './service/locator.dart';
 import './service/main_service.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  setupLocator();
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
