@@ -24,7 +24,7 @@ Application user flow is:
 implementing parent classes), using all best practices for Dart code
 - Reactive approach with **BLoC pattern**
 - Own custom services using streams and asynchronously mechanics - **Streams, Future, async/await**
-- Used **design patterns** - Repository, Singleton
+- Used **design patterns** - Repository, Singleton Instances using service locator (get_it)
 - **Declarative approach** at creating own custom widgets
 - flutter_bluetooth_serial library for **handling Bluetooth** connection
 - **obdsimulator and ELM327** as diagnostic hardware device for OBD-II interface
