@@ -5,14 +5,21 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:logger/logger.dart';
 
 import './bluetooth_connection_service.dart';
-import './main_service.dart';
-import './receive_data_handler.dart';
-import '../commands/command.dart';
-import '../commands/elm_command.dart';
+import '../../commands/command.dart';
+import '../../commands/elm_command.dart';
+import '../locator.dart';
+import '../main_service.dart';
+import '../../helpers/receive_data_handler.dart';
 
 class ElmBluetoothConnectionService implements BluetoothConnectionService {
+  ElmBluetoothConnectionService() {
+    _receiveDataHandler = locator.get<ReceiveDataHandler>();
+  }
+
   /// Represents bluetooth connection to the device
   BluetoothConnection _connection;
+
+  ReceiveDataHandler _receiveDataHandler;
 
   /// Shows bluetooth state of a physical device (smartphone)
   BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
@@ -52,9 +59,7 @@ class ElmBluetoothConnectionService implements BluetoothConnectionService {
     _connection = connection;
     _device = device;
     // Setting listener of data coming from connection
-    _connection.input
-        .listen(ReceiveDataHandler.instance.handleReceiveData)
-        .onDone(() {
+    _connection.input.listen(_receiveDataHandler.handleReceiveData).onDone(() {
       MainService().handleDeviceDisconnected();
     });
     await _initialDeviceConfiguration();
