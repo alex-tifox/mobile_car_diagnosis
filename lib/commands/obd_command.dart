@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import './command.dart';
-import '../service/bluetooth_data_helper.dart';
+import '../helpers/bluetooth_data_helper.dart';
 
 /// Base of any OBD command sent via bluetooth
 class ObdCommand implements Command {

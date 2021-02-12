@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:logger/logger.dart';
 
+import './bluetooth/bluetooth_connection_service.dart';
 import '../blocs/blocs.dart';
 import '../blocs/stream_facts.dart';
 import '../commands/obd_command.dart';
 import '../model/dtc_code.dart';
 import '../repository/diagnosis_data_repository.dart';
-import '../service/bluetooth_connection_service.dart';
-import '../service/command_response_recognizer.dart';
+import '../helpers/command_response_recognise_helper.dart';
 import '../service/locator.dart';
 import '../service/stream_facts/duplex_stream_fact.dart';
 
@@ -35,13 +35,8 @@ class MainService {
   DiagnosisDataRepository _dataRepository;
   BluetoothConnectionService _bluetoothConnectionService;
   final Logger _logger = Logger();
-  static final MainService _instance = MainService._internal();
 
-  factory MainService() {
-    return _instance;
-  }
-
-  MainService._internal() {
+  MainService() {
     _serviceToBlocStreamController = StreamController<ResponseStreamFact>();
     _serviceToBlocStreamIn = _serviceToBlocStreamController.sink;
     _serviceToBlocStreamOut =
@@ -51,7 +46,8 @@ class MainService {
     _blocToServiceStreamIn = _blocToServiceStreamController.sink;
     _blocToServiceStreamListener = _blocToServiceStreamController.stream
         .listen(_fromBlocToServiceListener);
-    _dataRepository = DiagnosisDataRepository();
+
+    _dataRepository = locator.get<DiagnosisDataRepository>();
     _bluetoothConnectionService = locator.get<BluetoothConnectionService>();
   }
 
@@ -102,7 +98,7 @@ class MainService {
     }
   }
 
-  /// Method for bonding with [CommandResponseRecognizer] to receive the list
+  /// Method for bonding with [CommandResponseRecogniseHelper] to receive the list
   /// of parsed DTC codes and store them at local storage.
   ///
   /// After storing this data, get codes from repository and send them to
