@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
-import '../commands/command.dart';
+import '../../commands/command.dart';
 
 abstract class BluetoothConnectionService {
   /// Getting all paired devices to the phone

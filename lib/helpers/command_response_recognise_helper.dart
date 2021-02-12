@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:logger/logger.dart';
 
-import './service_modes/service_mode_three.dart';
+import '../service/service_modes/service_mode_three.dart';
 
-class CommandResponseRecognizer {
+class CommandResponseRecogniseHelper {
   final Logger _logger = Logger();
 
   void recognizeCommandResponse(List<int> response) {

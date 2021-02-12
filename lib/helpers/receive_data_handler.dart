@@ -3,14 +3,10 @@ import 'dart:typed_data';
 
 import 'package:logger/logger.dart';
 
-import '../service/command_response_recognizer.dart';
+import 'command_response_recognise_helper.dart';
 
 class ReceiveDataHandler {
-  static final ReceiveDataHandler _instance = ReceiveDataHandler._internal();
-
-  static ReceiveDataHandler get instance => _instance;
-
-  ReceiveDataHandler._internal() {
+  ReceiveDataHandler() {
     _receivedData = [];
   }
 
@@ -25,7 +21,7 @@ class ReceiveDataHandler {
         data.where((element) => element != 0x0D && element != 0x3E).toList();
 
     if (pureData.isEmpty) {
-      CommandResponseRecognizer().recognizeCommandResponse(_receivedData);
+      CommandResponseRecogniseHelper().recognizeCommandResponse(_receivedData);
       _receivedData = [];
     } else {
       _receivedData.addAll(pureData);
