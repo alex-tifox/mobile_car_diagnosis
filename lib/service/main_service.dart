@@ -7,9 +7,9 @@ import './bluetooth/bluetooth_connection_service.dart';
 import '../blocs/blocs.dart';
 import '../blocs/stream_facts.dart';
 import '../commands/obd_command.dart';
+import '../helpers/command_response_recognise_helper.dart';
 import '../model/dtc_code.dart';
 import '../repository/diagnosis_data_repository.dart';
-import '../helpers/command_response_recognise_helper.dart';
 import '../service/locator.dart';
 import '../service/stream_facts/duplex_stream_fact.dart';
 
@@ -36,7 +36,10 @@ class MainService {
   BluetoothConnectionService _bluetoothConnectionService;
   final Logger _logger = Logger();
 
-  MainService() {
+  MainService({
+    BluetoothConnectionService bluetoothConnectionService,
+    DiagnosisDataRepository diagnosisDataRepository,
+  }) {
     _serviceToBlocStreamController = StreamController<ResponseStreamFact>();
     _serviceToBlocStreamIn = _serviceToBlocStreamController.sink;
     _serviceToBlocStreamOut =
@@ -47,8 +50,9 @@ class MainService {
     _blocToServiceStreamListener = _blocToServiceStreamController.stream
         .listen(_fromBlocToServiceListener);
 
-    _dataRepository = locator.get<DiagnosisDataRepository>();
-    _bluetoothConnectionService = locator.get<BluetoothConnectionService>();
+    _dataRepository = _dataRepository ?? locator.get<DiagnosisDataRepository>();
+    _bluetoothConnectionService =
+        bluetoothConnectionService ?? locator.get<BluetoothConnectionService>();
   }
 
   /// Stream used for listening for sent data from service in every Bloc.

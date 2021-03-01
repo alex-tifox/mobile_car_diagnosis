@@ -9,7 +9,7 @@ import './service/main_service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  setupLocator();
+  setupLocator(isDemo: true);
   runApp(MyApp());
 }
 

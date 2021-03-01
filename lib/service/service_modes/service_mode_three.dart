@@ -1,4 +1,5 @@
 import '../../model/dtc_code.dart';
+import '../locator.dart';
 import '../main_service.dart';
 
 class ServiceModeThree {
@@ -10,7 +11,7 @@ class ServiceModeThree {
   }
 
   ServiceModeThree._internal() {
-    _mainService = MainService();
+    _mainService = locator.get<MainService>();
   }
 
   List<String> dtcLetters = ['P', 'C', 'B', 'U'];
