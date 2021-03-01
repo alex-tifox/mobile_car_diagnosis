@@ -2,12 +2,11 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-
 import 'package:meta/meta.dart';
 
+import '../../service/locator.dart';
 import '../../service/main_service.dart';
 import '../../service/stream_facts/duplex_stream_fact.dart';
-
 import 'bluetooth_stream_fact.dart';
 
 part 'bluetooth_event.dart';
@@ -21,7 +20,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, BluetoothState> {
   BluetoothDevice _connectedDevice;
 
   BluetoothBloc()
-      : _mainService = MainService(),
+      : _mainService = locator.get<MainService>(),
         super(BluetoothInitial()) {
     _serviceToBlocListener =
         _mainService.serviceToBlocStreamOut.listen(_serviceToBlocHandler);

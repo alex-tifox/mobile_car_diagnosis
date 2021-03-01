@@ -4,9 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 import '../../model/dtc_code.dart';
+import '../../service/locator.dart';
 import '../../service/main_service.dart';
 import '../../service/stream_facts/duplex_stream_fact.dart';
-
 import 'dtc_stream_fact.dart';
 
 part 'dtc_event.dart';
@@ -18,7 +18,7 @@ class DtcBloc extends Bloc<DtcEvent, DtcState> {
   StreamSink<RequestStreamFact> _blocToServiceStreamIn;
 
   DtcBloc()
-      : _mainService = MainService(),
+      : _mainService = locator.get<MainService>(),
         super(DtcInitial()) {
     _serviceToBlocListener =
         _mainService.serviceToBlocStreamOut.listen(_serviceToBlocHandler);
