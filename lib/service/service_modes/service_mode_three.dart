@@ -47,9 +47,9 @@ class ServiceModeThree {
       dtcCodes.add(
         DtcCode(
           dtcShortName: element,
-          dtcFullName: element,
+          dtcSymptoms: <String>[],
           dtcDescription: 'description',
-          dtcCauses: 'causes',
+          dtcCauses: <String>[],
         ),
       );
     });

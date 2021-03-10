@@ -4,6 +4,7 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:logger/logger.dart';
 
 import './bluetooth/bluetooth_connection_service.dart';
+import './dtc_details/dtc_details_api_client.dart';
 import '../blocs/blocs.dart';
 import '../blocs/stream_facts.dart';
 import '../commands/obd_command.dart';
@@ -34,11 +35,13 @@ class MainService {
 
   DiagnosisDataRepository _dataRepository;
   BluetoothConnectionService _bluetoothConnectionService;
+  DtcDetailsApiClient _dtcDetailsApiClient;
   final Logger _logger = Logger();
 
   MainService({
     BluetoothConnectionService bluetoothConnectionService,
     DiagnosisDataRepository diagnosisDataRepository,
+    DtcDetailsApiClient dtcDetailsApiClient,
   }) {
     _serviceToBlocStreamController = StreamController<ResponseStreamFact>();
     _serviceToBlocStreamIn = _serviceToBlocStreamController.sink;
@@ -53,6 +56,8 @@ class MainService {
     _dataRepository = _dataRepository ?? locator.get<DiagnosisDataRepository>();
     _bluetoothConnectionService =
         bluetoothConnectionService ?? locator.get<BluetoothConnectionService>();
+    _dtcDetailsApiClient =
+        dtcDetailsApiClient ?? locator.get<DtcDetailsApiClient>();
   }
 
   /// Stream used for listening for sent data from service in every Bloc.
@@ -151,5 +156,18 @@ class MainService {
     _bluetoothConnectionService.dispose();
     _blocToServiceStreamListener.cancel();
     _logger.d('MainService disposed');
+  }
+
+  Future<DtcCode> getFullDataForDtcCode({
+    String carBrand,
+    DtcCode dtcCodeToRequest,
+  }) async {
+    assert(dtcCodeToRequest.dtcShortName != null);
+
+    final codesFullData = await _dtcDetailsApiClient.getCodeFullData(
+      carBrand: carBrand,
+      dtcCodeToRequest: dtcCodeToRequest.dtcShortName,
+    );
+    return dtcCodeToRequest.addDataFromJson(codesFullData);
   }
 }
