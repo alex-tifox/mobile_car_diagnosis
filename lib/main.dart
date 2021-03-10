@@ -29,6 +29,9 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<DtcBloc>(
           create: (context) => DtcBloc(),
         ),
+        BlocProvider<DtcDetailsBloc>(
+          create: (context) => DtcDetailsBloc(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
