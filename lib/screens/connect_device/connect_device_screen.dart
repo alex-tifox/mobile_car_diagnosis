@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import './widgets/paired_devices_list_widget.dart';
 import '../../blocs/blocs.dart';
+import '../../widgets/custom_circular_progress_indicator.dart';
 import '../../widgets/custom_elevated_button.dart';
 
 class ConnectDeviceScreen extends StatefulWidget {
@@ -68,16 +69,7 @@ class _ConnectDeviceScreenState extends State<ConnectDeviceScreen> {
               } else if (bluetoothState
                   is BluetoothConnectDeviceInProcessState) {
                 if (!bluetoothState.connected) {
-                  return Center(
-                    child: Container(
-                      height: 40,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).colorScheme.primaryVariant,
-                        ),
-                      ),
-                    ),
-                  );
+                  return CustomCircularProgressIndicator();
                 } else {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
