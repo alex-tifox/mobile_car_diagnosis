@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../screens/diagnosis/widgets/dtc_code_expansion_tile.dart';
 import '../../blocs/blocs.dart';
-import '../../widgets/custom_elevated_button.dart';
 import '../../blocs/dtc/dtc_bloc.dart';
+import '../../screens/diagnosis/widgets/dtc_code_tile.dart';
+import '../../widgets/custom_elevated_button.dart';
 
 class DiagnosisScreen extends StatelessWidget {
   void _startScanForDtc(BuildContext context) =>
@@ -36,7 +36,7 @@ class DiagnosisScreen extends StatelessWidget {
                       shrinkWrap: true,
                       children: [
                         ...dtcState.dtcCodesList
-                            .map((dtc) => DtcCodeExpansionTile(dtcCode: dtc)),
+                            .map((dtc) => DtcCodeTile(dtcCode: dtc)),
                       ],
                     ),
                   ),
