@@ -34,21 +34,26 @@ class _DtcDetailScreenState extends State<DtcDetailScreen> {
             if (state is DtcDetailsRequestInProgress) {
               return CustomCircularProgressIndicator();
             } else if (state is DtcDetailsReceived) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _DtcDescription(
-                    description: state.dtcCode.dtcDescription,
-                  ),
-                  _ListedDtcDetails(
-                    listTitle: 'Symptoms',
-                    listedData: state.dtcCode.dtcSymptoms,
-                  ),
-                  _ListedDtcDetails(
-                    listTitle: 'Causes',
-                    listedData: state.dtcCode.dtcCauses,
-                  ),
-                ],
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _DtcDescription(
+                      description: state.dtcCode.dtcDescription,
+                    ),
+                    _ListedDtcDetails(
+                      listTitle: 'Symptoms',
+                      listedData: state.dtcCode.dtcSymptoms,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 16.0),
+                      child: _ListedDtcDetails(
+                        listTitle: 'Causes',
+                        listedData: state.dtcCode.dtcCauses,
+                      ),
+                    ),
+                  ],
+                ),
               );
             } else {
               return SizedBox.shrink();
@@ -71,23 +76,35 @@ class _DtcDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 16, top: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Theme.of(context).colorScheme.background,
+      ),
+      margin: EdgeInsets.only(
+        left: 10,
+        top: 10,
+        right: 10,
+      ),
+      padding: EdgeInsets.only(
+        left: 10,
+        top: 10,
+        right: 10,
+        bottom: 16,
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Description',
-            style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                fontWeight: FontWeight.normal,
-                fontSize: 18,
-                color: Colors.black),
+          _DtcBlockTitleText(
+            title: 'Description',
           ),
-          Text(
-            description,
-            style: Theme.of(context)
-                .primaryTextTheme
-                .bodyText2
-                .copyWith(color: Colors.black),
+          Padding(
+            padding: EdgeInsets.only(
+              left: 10,
+              right: 10,
+              top: 5,
+            ),
+            child: _DtcBlockText(
+              dtcDetailText: description,
+            ),
           )
         ],
       ),
@@ -108,10 +125,80 @@ class _ListedDtcDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Container(
+      padding: EdgeInsets.all(10),
+      margin: EdgeInsets.only(
+        left: 10,
+        top: 16,
+        right: 10,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Theme.of(context).colorScheme.background,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _DtcBlockTitleText(title: listTitle),
+          _DtcDetailsList(details: listedData),
+        ],
+      ),
+    );
+  }
+}
+
+class _DtcDetailsList extends StatelessWidget {
+  final List<String> _details;
+
+  _DtcDetailsList({
+    @required List<String> details,
+  }) : _details = details;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
       children: [
-        ...listedData.map(
-          (detail) => _DtcDetailsListTile(detail: detail),
+        Positioned(
+          left: 10,
+          top: 5,
+          bottom: 0,
+          width: 1,
+          child: Container(
+            height: 1000,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.only(left: 6.5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ..._details.map(
+                (detail) => Padding(
+                  padding: EdgeInsets.only(
+                    top: 5.0,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 5.0),
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
+                      VerticalDivider(),
+                      _DtcDetailsListTile(
+                        detail: detail,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -127,8 +214,51 @@ class _DtcDetailsListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(detail),
+    return Container(
+      child: Expanded(
+        child: _DtcBlockText(
+          dtcDetailText: detail,
+        ),
+      ),
+    );
+  }
+}
+
+class _DtcBlockTitleText extends StatelessWidget {
+  final String _title;
+
+  _DtcBlockTitleText({
+    @required String title,
+  }) : _title = title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _title,
+      style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: Colors.black,
+          ),
+    );
+  }
+}
+
+class _DtcBlockText extends StatelessWidget {
+  final String _dtcDetailText;
+
+  _DtcBlockText({
+    @required String dtcDetailText,
+  }) : _dtcDetailText = dtcDetailText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _dtcDetailText,
+      style: Theme.of(context)
+          .primaryTextTheme
+          .bodyText2
+          .copyWith(color: Colors.black),
     );
   }
 }

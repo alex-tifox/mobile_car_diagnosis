@@ -21,12 +21,15 @@ class DtcCodeTile extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25.0),
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.primary,
       ),
       child: ListTile(
         title: Text(
           _dtcCode.dtcShortName,
-          style: Theme.of(context).primaryTextTheme.bodyText2,
+          style: Theme.of(context)
+              .primaryTextTheme
+              .bodyText2
+              .copyWith(fontWeight: FontWeight.bold),
         ),
         trailing: _DtcCodeTileTrailingButton(
           dtcCode: _dtcCode,
@@ -67,6 +70,7 @@ class _DtcCodeTileTrailingButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.arrow_forward_rounded),
+      color: Colors.white,
       onPressed: () => _navigateToDtcDetailsScreen(context),
     );
   }
