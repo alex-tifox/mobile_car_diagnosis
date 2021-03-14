@@ -22,6 +22,6 @@ void setupLocator({bool isDemo = false}) {
   }
 
   locator.registerSingleton<DiagnosisDataRepository>(DiagnosisDataRepository());
-  locator.registerSingleton<MainService>(MainService());
   locator.registerSingleton<DtcDetailsApiClient>(DtcDetailsDemoApi());
+  locator.registerSingleton<MainService>(MainService());
 }

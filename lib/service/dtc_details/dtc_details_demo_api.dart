@@ -12,7 +12,7 @@ class DtcDetailsDemoApi implements DtcDetailsApiClient {
   }
 
   @override
-  Future<Map<String, dynamic>> getCodeFullData({
+  Future<Map<String, String>> getCodeFullData({
     String carBrand,
     String dtcCodeToRequest,
   }) async {
@@ -24,7 +24,7 @@ class DtcDetailsDemoApi implements DtcDetailsApiClient {
     } else if (dtcCodeToRequest == _p0500) {
       return DemoData.p0500DtcCode;
     } else {
-      return <String, dynamic>{};
+      return <String, String>{};
     }
   }
 }

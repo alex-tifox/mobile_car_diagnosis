@@ -6,7 +6,7 @@ class DtcCode {
   final String dtcDescription;
   final List<String> dtcCauses;
 
-  final String _possibleCausesJsonKey = 'possibleCauses';
+  final String _possibleCausesJsonKey = 'possiblesCauses';
   final String _possibleSymptomsJsonKey = 'possibleSymptoms';
   final String _descriptionJsonKey = 'description';
 

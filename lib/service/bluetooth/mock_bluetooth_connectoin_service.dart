@@ -85,8 +85,8 @@ class MockBluetoothConnectionService implements BluetoothConnectionService {
     await _enableBluetooth();
 
     if (utf8.decode(rawData) == '03\r') {
-      _mockedConnection.sink.add(Uint8List.fromList(
-          [52, 51, 49, 49, 51, 51, 70, 68, 49, 50, 48, 48, 48, 48]));
+      _mockedConnection.sink.add(
+          Uint8List.fromList([52, 51, 48, 49, 55, 52, 48, 53, 48, 48, 13, 62]));
       _mockedConnection.sink.add(Uint8List.fromList([0x3e, 0x0D]));
     }
   }
